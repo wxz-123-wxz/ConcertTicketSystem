@@ -1,0 +1,71 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ticket-gateway
+  config:
+    import: optional:nacos:${spring.application.name}.yaml
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+      config:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+        file-extension: yaml
+    gateway:
+      default-filters:
+        - SetResponseHeader=Content-Type, application/json;charset=UTF-8
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+            allow-credentials: true
+      routes:
+        - id: auth-service
+          uri: lb://ticket-auth-service
+          predicates:
+            - Path=/api/auth/**,/api/admin/users/**
+          filters:
+            - StripPrefix=1
+        - id: show-service
+          uri: lb://ticket-show-service
+          predicates:
+            - Path=/api/shows/**,/api/admin/shows/**,/api/admin/sessions/**,/api/admin/venues/**
+          filters:
+            - StripPrefix=1
+        - id: seat-service
+          uri: lb://ticket-seat-service
+          predicates:
+            - Path=/api/seats/**
+          filters:
+            - StripPrefix=1
+        - id: order-service
+          uri: lb://ticket-order-service
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - StripPrefix=1
+        - id: payment-service
+          uri: lb://ticket-payment-service
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - StripPrefix=1
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 3s
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway

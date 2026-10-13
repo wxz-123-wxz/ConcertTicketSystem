@@ -1,0 +1,23 @@
+server:
+  port: 9005
+spring:
+  application:
+    name: ticket-order-service
+  config:
+    import: optional:nacos:${spring.application.name}.yaml
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/live_ticket?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:}
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+      config:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+app:
+  order:
+    timeout-minutes: 10

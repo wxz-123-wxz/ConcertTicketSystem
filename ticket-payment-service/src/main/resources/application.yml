@@ -1,0 +1,35 @@
+server:
+  port: 9006
+spring:
+  application:
+    name: ticket-payment-service
+  config:
+    import: optional:nacos:${spring.application.name}.yaml
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/live_ticket?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 3s
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+      config:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+wechat:
+  mock:
+    frontend-port: ${WECHAT_MOCK_FRONTEND_PORT:5173}
+    public-origin: ${WECHAT_MOCK_PUBLIC_ORIGIN:}
+alipay:
+  app-id: ${ALIPAY_APP_ID:}
+  gateway-url: ${ALIPAY_GATEWAY_URL:https://openapi-sandbox.dl.alipaydev.com/gateway.do}
+  return-url: ${ALIPAY_RETURN_URL:http://localhost:5173/orders?alipayReturn=1}
+  private-key: ${ALIPAY_PRIVATE_KEY:}
+  alipay-public-key: ${ALIPAY_PUBLIC_KEY:}
